@@ -1,288 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Be My Valentine? 💕</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  min-height: 100vh;
-  background: #fff0f5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Lato', sans-serif;
-  overflow: hidden;
-  position: relative;
-}
-
-/* Floating hearts */
-.bg-hearts { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-.bh { position:absolute; animation:floatUp linear infinite; opacity:0; }
-@keyframes floatUp {
-  0%   { transform:translateY(110vh) rotate(0deg);  opacity:0; }
-  10%  { opacity:0.4; }
-  90%  { opacity:0.4; }
-  100% { transform:translateY(-10vh) rotate(360deg); opacity:0; }
-}
-
-/* Card */
-.card {
-  position:relative; z-index:1;
-  background:white; border-radius:32px;
-  padding:52px 48px 48px; max-width:460px; width:92vw;
-  text-align:center;
-  box-shadow:0 20px 80px rgba(232,52,106,.18),0 4px 20px rgba(0,0,0,.06);
-  border:2px solid rgba(255,107,157,.2);
-  animation:cardIn .7s cubic-bezier(.23,1.01,.32,1) both;
-}
-@keyframes cardIn {
-  from { opacity:0; transform:scale(.85) translateY(30px); }
-  to   { opacity:1; transform:scale(1)   translateY(0); }
-}
-
-#mainEmoji {
-  font-size:5rem; display:block; margin-bottom:18px;
-  animation:pulse 1.8s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-
-#mainTitle {
-  font-family:'Playfair Display',serif;
-  font-size:2rem; color:#c9184a; line-height:1.4; margin-bottom:8px;
-}
-#mainTitle em { color:#e8346a; font-style:italic; }
-
-#mainSub { font-size:.92rem; color:#b5809a; margin-bottom:28px; letter-spacing:.02em; }
-
-#pleadingEmojis {
-  font-size:1.5rem; min-height:2.5rem;
-  margin-bottom:28px; letter-spacing:5px;
-  transition:all .3s ease;
-}
-
-/* YES button */
-#yes-btn {
-  background:linear-gradient(135deg,#ff6b9d,#e8346a);
-  color:white; border:none; border-radius:50px;
-  font-family:'Playfair Display',serif; font-weight:700;
-  cursor:pointer;
-  box-shadow:0 6px 28px rgba(232,52,106,.35);
-  font-size:1.3rem; padding:14px 44px;
-  transition:font-size .4s cubic-bezier(.34,1.56,.64,1),
-             padding    .4s cubic-bezier(.34,1.56,.64,1),
-             box-shadow .2s;
-  display:inline-block;
-}
-#yes-btn:hover { box-shadow:0 12px 40px rgba(232,52,106,.5); transform:scale(1.04); }
-
-/* NO button — fixed so it can roam anywhere */
-#no-btn {
-  position:fixed;
-  background:#f3e8ee; color:#c08090;
-  border:none; border-radius:50px;
-  font-family:'Playfair Display',serif; font-weight:700;
-  cursor:pointer; z-index:999;
-  font-size:1rem; padding:11px 30px;
-  transition:font-size .35s ease, padding .35s ease;
-}
-#no-btn:hover { background:#eedde6; }
-
-/* YAY screen */
-#yayScreen { display:none; flex-direction:column; align-items:center; gap:14px; }
-.yay-emoji { font-size:5rem; animation:bounce .5s ease infinite alternate; }
-@keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-16px)} }
-#yayScreen h2 { font-family:'Playfair Display',serif; font-size:2.2rem; color:#c9184a; }
-#yayScreen p  { color:#b5809a; font-size:1rem; line-height:1.6; }
-.final-emojis { font-size:2.4rem; letter-spacing:6px; animation:pulse 1.5s ease-in-out infinite; }
-
-/* confetti */
-.cp {
-  position:fixed; pointer-events:none; z-index:9999;
-  animation:cfetti 1.5s ease-out forwards;
-}
-@keyframes cfetti {
-  0%   { transform:translate(0,0) rotate(0deg) scale(1); opacity:1; }
-  100% { transform:translate(var(--tx),var(--ty)) rotate(720deg) scale(.2); opacity:0; }
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Function Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #fafaf8; max-width: 500px; margin: 0 auto; }
+    button { width: 100%; padding: 14px; font-size: 15px; cursor: pointer; border: 1px solid #333; border-radius: 8px; background: #fff; margin-bottom: 12px; }
+    button:hover { background: #f0f0f0; }
+    #log { background: #111; color: #ccc; font-family: monospace; font-size: 13px; padding: 1rem; border-radius: 8px; white-space: pre-wrap; min-height: 200px; margin-top: 1rem; }
+    .ok { color: #7dff7d; }
+    .err { color: #ff7d7d; }
+    .info { color: #7db8ff; }
+  </style>
 </head>
 <body>
+  <h2>Edge Function Test</h2>
+  <p style="font-size:13px;color:#666;margin-bottom:1.5rem;">Upload this to GitHub, open it, sign in with Google first on the main site, then come back and click the buttons below.</p>
 
-<div class="bg-hearts" id="bgHearts"></div>
+  <button onclick="checkSession()">Step 1 — Am I logged in?</button>
+  <button onclick="pingFunction()">Step 2 — Can I reach the notify function?</button>
+  <button onclick="sendTestEmail()">Step 3 — Send test email to ambikabanerjee17@gmail.com</button>
 
-<div class="card" id="card">
-  <!-- Question -->
-  <div id="questionView">
-    <span id="mainEmoji">💝</span>
-    <h1 id="mainTitle">Will you be <em>my Valentine?</em></h1>
-    <p id="mainSub">I promise it'll be the best decision ever ✨</p>
-    <div id="pleadingEmojis">🥺</div>
-    <button id="yes-btn" onclick="sayYes()">Yes 💖</button>
-  </div>
-
-  <!-- Yay -->
-  <div id="yayScreen">
-    <div class="yay-emoji">🥳</div>
-    <h2>Yayyy!! 💕</h2>
-    <p>I knew you'd say yes, my love! 🌹<br>You just made me the happiest person ever!</p>
-    <div class="final-emojis">💑✨🎉💕🌹</div>
-  </div>
-</div>
-
-<!-- No button outside card so it can roam the full screen -->
-<button id="no-btn" onclick="runNo()">No 🙃</button>
+  <div id="log"></div>
 
 <script>
-// ── Floating background hearts ──
-const bgEmojis = ['🩷','💗','💓','💞','💕','🌸','✨','🫶','💘','💝'];
-const bgEl = document.getElementById('bgHearts');
-for (let i = 0; i < 26; i++) {
-  const s = document.createElement('span');
-  s.classList.add('bh');
-  s.textContent = bgEmojis[Math.floor(Math.random() * bgEmojis.length)];
-  s.style.left = (Math.random() * 100) + 'vw';
-  s.style.fontSize = (.8 + Math.random() * 1.4) + 'rem';
-  const dur = 7 + Math.random() * 10;
-  s.style.animationDuration = dur + 's';
-  s.style.animationDelay   = -(Math.random() * dur) + 's';
-  bgEl.appendChild(s);
-}
+  const SUPABASE_URL = 'https://dioxbtmvkonwgovpqdqx.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpb3hidG12a29ud2dvdnBxZHF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2Nzg2MzcsImV4cCI6MjA5MDI1NDYzN30.7ZlAtTqpKvXWUNlTRwN4bcAB9V87eTfHaB-vNMXZKr0';
 
-// ── Initial position of no-btn: below the yes button ──
-const noBtn  = document.getElementById('no-btn');
-const yesBtn = document.getElementById('yes-btn');
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const logEl = document.getElementById('log');
 
-function positionNoBtnStart() {
-  const card = document.getElementById('card');
-  const r    = card.getBoundingClientRect();
-  noBtn.style.left = (r.left + r.width / 2 - noBtn.offsetWidth / 2) + 'px';
-  noBtn.style.top  = (r.bottom - 55) + 'px';
-}
-
-window.addEventListener('load', () => { setTimeout(positionNoBtnStart, 50); });
-window.addEventListener('resize', positionNoBtnStart);
-
-// ── Data ──
-let noCount = 0;
-const MAX = 8;
-
-const yesSizes = [1.3, 1.65, 2.0,  2.4,  2.85, 3.3,  3.85, 4.4,  5.0 ];
-const noSizes  = [1.0, 0.84, 0.70, 0.58, 0.47, 0.38, 0.30, 0.23, 0.17];
-const noPads   = [11,  9,    7.5,  6,    5,    4,    3,    2.5,  2   ];
-
-const pleadingSets = [
-  '🥺',
-  '🥺🥺',
-  '🥺🥺🙏',
-  '😭🥺🙏🥺😭',
-  '😭😭🙏💔🥺😭',
-  '💔😭🙏🥺🙏😭💔',
-  '😭💔🫶🙏🥺🙏🫶💔😭',
-  '💔😭😭🫶🙏🥺🙏🫶😭😭💔',
-  '💔💔😭😭🫶🙏🥺🙏🫶😭😭💔💔'
-];
-
-const titles = [
-  'Will you be <em>my Valentine?</em>',
-  'Are you sure? 🥺 <em>Please reconsider...</em>',
-  'Nooo don\'t do this! 😭 <em>I need you!</em>',
-  'Come onnnn 🙏 <em>Just say yes!</em>',
-  'My heart is breaking... 💔 <em>One more chance?</em>',
-  'I\'ll be the best Valentine! 🌹 <em>I promise! 🥺</em>',
-  'Okay last chance... 😭 <em>Choose wisely 💕</em>',
-  'You\'ll miss all <em>the cuddles! 🫶</em>',
-  'THE YES BUTTON IS RIGHT THERE 😭 <em>just click it!!</em>'
-];
-
-const subs = [
-  'I promise it\'ll be the best decision ever ✨',
-  'You know you want to say yes... 💕',
-  'Think of all the chocolates and flowers! 🌹',
-  'I\'ve been waiting for this moment... 🥺',
-  'One tiny yes is all I need 💝',
-  'Pinky promise it\'ll be magical ✨',
-  'My whole heart is on the line here 💔',
-  'The yes button is getting BIG for a reason 😭',
-  'PLEASE. I am begging you. 🙏😭'
-];
-
-// ── No logic ──
-function runNo() {
-  if (noCount < MAX) noCount++;
-
-  // Grow yes button
-  yesBtn.style.fontSize = yesSizes[noCount] + 'rem';
-  yesBtn.style.padding  = (12 + noCount * 3) + 'px ' + (44 + noCount * 10) + 'px';
-
-  // Shrink no button
-  noBtn.style.fontSize = noSizes[noCount] + 'rem';
-  noBtn.style.padding  = noPads[noCount] + 'px ' + (noPads[noCount] * 2.2) + 'px';
-
-  // Update message
-  document.getElementById('mainTitle').innerHTML      = titles[noCount];
-  document.getElementById('mainSub').textContent      = subs[noCount];
-  document.getElementById('pleadingEmojis').textContent = pleadingSets[noCount];
-
-  // Drift no button to a random spot on screen
-  const btnW = noBtn.offsetWidth  || 80;
-  const btnH = noBtn.offsetHeight || 40;
-  const pad  = 16;
-  const maxX = Math.max(pad, window.innerWidth  - btnW - pad);
-  const maxY = Math.max(pad, window.innerHeight - btnH - pad);
-
-  // Pick a spot that's not too close to current position
-  let rx, ry, tries = 0;
-  const curL = parseFloat(noBtn.style.left) || window.innerWidth / 2;
-  const curT = parseFloat(noBtn.style.top)  || window.innerHeight / 2;
-  do {
-    rx = pad + Math.random() * maxX;
-    ry = pad + Math.random() * maxY;
-    tries++;
-  } while (tries < 30 && Math.hypot(rx - curL, ry - curT) < 150);
-
-  noBtn.style.left = rx + 'px';
-  noBtn.style.top  = ry + 'px';
-}
-
-// Also flee on mouse enter (desktop) / touchstart (mobile)
-noBtn.addEventListener('mouseenter', runNo);
-noBtn.addEventListener('touchstart', function(e) {
-  e.preventDefault();
-  runNo();
-}, { passive: false });
-
-// ── Say Yes ──
-function sayYes() {
-  noBtn.style.display = 'none';
-
-  // Confetti burst
-  const colors = ['#ff6b9d','#ff4d6d','#ffb3c6','#c9184a','#ffd6e7','#ff85a1','#ffffff','#ffd700'];
-  for (let i = 0; i < 90; i++) {
-    const c = document.createElement('div');
-    c.classList.add('cp');
-    c.style.background    = colors[Math.floor(Math.random() * colors.length)];
-    c.style.width         = (5 + Math.random() * 11) + 'px';
-    c.style.height        = (5 + Math.random() * 11) + 'px';
-    c.style.borderRadius  = Math.random() > .4 ? '50%' : '3px';
-    c.style.left          = (15 + Math.random() * 70) + 'vw';
-    c.style.top           = (15 + Math.random() * 70) + 'vh';
-    const angle = Math.random() * Math.PI * 2;
-    const dist  = 80 + Math.random() * 280;
-    c.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-    c.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-    c.style.animationDelay = (Math.random() * .5) + 's';
-    document.body.appendChild(c);
-    setTimeout(() => c.remove(), 2200);
+  function log(msg, type) {
+    const line = document.createElement('div');
+    line.className = type || 'info';
+    line.textContent = new Date().toLocaleTimeString() + '  ' + msg;
+    logEl.appendChild(line);
   }
 
-  // Switch to yay screen
-  document.getElementById('questionView').style.display = 'none';
-  document.getElementById('yayScreen').style.display    = 'flex';
-}
+  // Step 1 — check session
+  async function checkSession() {
+    log('Checking session...', 'info');
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+      log('LOGGED IN as: ' + session.user.email, 'ok');
+    } else {
+      log('NOT LOGGED IN — go to your main site first, sign in with Google, then come back here', 'err');
+    }
+  }
+
+  // Step 2 — ping the function
+  async function pingFunction() {
+    log('Calling notify function...', 'info');
+    try {
+      const { data, error } = await sb.functions.invoke('notify', {
+        body: { type: 'ping' }
+      });
+      if (error) {
+        log('ERROR: ' + JSON.stringify(error), 'err');
+        if (JSON.stringify(error).includes('404')) {
+          log('REASON: Function named "notify" not found in Supabase. Check spelling — must be exactly "notify"', 'err');
+        } else if (JSON.stringify(error).includes('401') || JSON.stringify(error).includes('403')) {
+          log('REASON: Not authorised — make sure you are logged in (run Step 1 first)', 'err');
+        } else if (JSON.stringify(error).includes('networkerror') || JSON.stringify(error).includes('fetch')) {
+          log('REASON: Network error — Edge Functions may not be enabled on your Supabase plan', 'err');
+        }
+      } else {
+        log('Function reached! Response: ' + JSON.stringify(data), 'ok');
+      }
+    } catch(e) {
+      log('EXCEPTION: ' + e.message, 'err');
+    }
+  }
+
+  // Step 3 — send real test email
+  async function sendTestEmail() {
+    log('Sending test email...', 'info');
+    try {
+      const { data, error } = await sb.functions.invoke('notify', {
+        body: {
+          type: 'note',
+          data: {
+            fromName: 'Anuja',
+            toName: 'Ambika',
+            toEmail: 'ambikabanerjee17@gmail.com',
+            message: 'Test email — if you see this, everything is working!'
+          }
+        }
+      });
+      if (error) {
+        log('ERROR: ' + JSON.stringify(error), 'err');
+      } else {
+        log('Done! Response: ' + JSON.stringify(data), 'ok');
+        log('Now check ambikabanerjee17@gmail.com inbox (and spam folder)', 'ok');
+        log('Also check Resend → Logs to see if the send was attempted', 'info');
+      }
+    } catch(e) {
+      log('EXCEPTION: ' + e.message, 'err');
+    }
+  }
+
+  // auto check session on load
+  checkSession();
 </script>
 </body>
 </html>
